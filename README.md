@@ -87,6 +87,10 @@ My first replays failed on 11 of 48 takes, always the same takes. The diagnosis 
 | 14 cm | 21.2 cm | both succeed |
 | 15–19 cm | 22–26 cm | both succeed |
 
+| 13 cm lift: carton hits the basket, basket moves | 16 cm lift: clean carry |
+|---|---|
+| ![](assets/lift_fail_13cm.png) | ![](assets/lift_ok_16cm.png) |
+
 The threshold is between 13 and 14 cm. I set the floor at **16 cm** (2 cm margin). My real box is 5 cm tall, so my real lifts never needed to be this high. **This is a scene gap:** my demonstrations supply where and when; the simulator's geometry dictates how high.
 
 With that floor, **all 48 takes replay successfully** (96/96 across two layouts each).
@@ -115,7 +119,9 @@ I measured how much the action label changes from one step to the next:
 | Clean (48) | 0.014 | 0.001 |
 | Noisy (31) | **0.253** | **0.075** |
 
-The noisy labels were 18× jerkier in position and 75× in rotation (`assets/action_check.png`). I had added a new random push of 30% of full action at every step. The arm trembled in those episodes, and the labels, which correct for the current error, swung with it. 40% of the training data showed shaking as normal behaviour, and the model learned it faithfully.
+The noisy labels were 18× jerkier in position and 75× in rotation:
+
+![Action labels: clean episode (top) versus noisy episode (bottom)](assets/action_check.png) I had added a new random push of 30% of full action at every step. The arm trembled in those episodes, and the labels, which correct for the current error, swung with it. 40% of the training data showed shaking as normal behaviour, and the model learned it faithfully.
 
 The DART paper chooses the noise level to match the trained policy's own errors. Mine was far larger, and white rather than smooth.
 
@@ -155,13 +161,13 @@ The policy predicts 50 actions at a time. I chose beforehand to execute 10 and t
 |---|---|
 | 5 (v2) | 1/10 |
 | **10 (v2, main result)** | **4/10** |
-| 50 (v1) | 0/10 |
+| 50 (v1, the shaky model) | 0/10 |
 
-Ten is the best of the three. Re-planning too rarely lets errors build up; re-planning too often seems to make the policy switch between plans.
+Ten is the best of the three. The 50-step row was measured on the v1 model, so it is a weaker comparison than the other two. Re-planning too rarely lets errors build up; re-planning too often seems to make the policy switch between plans.
 
 ### Snapping the gripper command (inference only, decided after seeing the failures)
 
-In several failures the gripper hovered half-closed around a centred carton. The policy's gripper output sits between "open" (−1) and "closed" (+1), and the simulator treats it as partly closed. Snapping it to the nearer of the two is common in LIBERO evaluations. It needs no retraining: a four-line change in LeRobot's environment wrapper ([`patches/binarize_gripper.patch`](patches/binarize_gripper.patch)), switched on with `BINARIZE_GRIPPER=1`.
+In several failures the gripper looked as if it were hovering half-closed around a centred carton. One possible cause: the policy's gripper output is a continuous value between "open" (−1) and "closed" (+1), and the simulator treats an in-between value as partly closed. Snapping it to the nearer of the two is common in LIBERO evaluations, so I tested it. It needs no retraining: a four-line change in LeRobot's environment wrapper ([`patches/binarize_gripper.patch`](patches/binarize_gripper.patch)), switched on with `BINARIZE_GRIPPER=1`.
 
 | Policy | Held-out 0–9 | Layouts 10–49 | All |
 |---|---|---|---|
@@ -204,8 +210,10 @@ python3 -m venv .venv_percep && source .venv_percep/bin/activate
 pip install mediapipe matplotlib scipy
 ```
 
+**Without my raw videos:** the full 48 takes are not in the repository, but the perception output the dataset builder needs, `data/perception/keyposes.npz`, is. So you can skip straight to the dataset step below and reproduce everything from there.
+
 ```bash
-# perception (.venv_percep)
+# perception (.venv_percep), needs the raw videos in data/raw and data/takes
 python calibrate.py data/raw/calib.mov 33.2
 for f in data/takes/take_*.mov; do python perceive.py "$f" 95; done
 for n in $(seq -w 1 48); do python hand_path.py take_$n 95; done
