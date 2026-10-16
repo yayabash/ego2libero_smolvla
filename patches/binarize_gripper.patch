@@ -1,0 +1,14 @@
+diff --git a/src/lerobot/envs/libero.py b/src/lerobot/envs/libero.py
+index 17fc22bb..0eaf4030 100644
+--- a/src/lerobot/envs/libero.py
++++ b/src/lerobot/envs/libero.py
+@@ -371,6 +371,9 @@ class LiberoEnv(gym.Env):
+                 f"Expected action to be 1-D (shape (action_dim,)), "
+                 f"but got shape {action.shape} with ndim={action.ndim}"
+             )
++        if __import__("os").environ.get("BINARIZE_GRIPPER") == "1":
++            action = __import__("numpy").array(action, dtype=float, copy=True)
++            action[-1] = 1.0 if action[-1] > 0 else -1.0
+         raw_obs, reward, done, info = self._env.step(action)
+ 
+         is_success = self._env.check_success()

@@ -1,0 +1,15 @@
+name,verdict,lift,reach_s,carry_s,approach_deg,map_rot_deg,map_scale,human_dist_cm,reasons
+take_04_L16,FAIL,0.13,3.27,4.47,-177.99,124.77,1.16,30.79,carton ended 14 cm from basket centre
+take_05_L18,FAIL,0.13,2.46,6.51,-179.69,160.86,0.82,45.29,no problem detected
+take_08_L24,FAIL,0.13,4.36,4.89,164.84,146.33,0.93,38.82,no problem detected
+take_10_L28,FAIL,0.13,3.96,5.29,140.47,44.46,13.95,2.57,no problem detected
+take_11_L30,FAIL,0.13,5.77,3.48,87.2,-15.06,1.78,21.17,no problem detected
+take_16_L40,FAIL,0.13,3.21,6.04,-143.71,143.9,1.29,27.14,no problem detected
+take_21_L10,FAIL,0.13,4.28,4.97,-163.47,128.04,1.54,24.61,no problem detected
+take_22_L12,FAIL,0.13,4.63,4.62,-160.47,168.86,1.02,35.77,no problem detected
+take_31_L30,FAIL,0.13,5.33,3.92,166.98,162.99,0.74,50.78,no problem detected
+take_44_L16,FAIL,0.13,3.69,5.56,105.2,164.55,0.55,64.97,no problem detected
+take_48_L24,FAIL,0.13,4.93,4.32,-24.22,208.24,2.73,13.25,no problem detected
+take_01_L10,SUCCESS,0.16,2.91,6.34,-145.18,143.34,1.37,27.57,no problem detected
+take_02_L12,SUCCESS,0.16,2.33,6.92,-73.34,189.93,2.12,17.12,no problem detected
+take_03_L14,SUCCESS,0.14,3.17,6.08,124.1,161.22,0.82,44.46,no problem detected

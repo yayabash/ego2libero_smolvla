@@ -1,0 +1,20 @@
+# environments and the LeRobot clone (installed, not committed)
+.venv/
+.venv_percep/
+lerobot/
+__pycache__/
+
+# large data: raw videos, per-take outputs, datasets, checkpoints
+data/raw/
+data/takes/*.mov
+data/perception/*.npz
+data/perception/*_check.mp4
+data/lerobot_dataset*/
+data/diag/*.mp4
+data/*.mp4
+data/hand_landmarker.task
+outputs/train/
+outputs/eval/*/videos/
+*.mov
+*.MOV
+*.AAE

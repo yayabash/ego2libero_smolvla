@@ -1,0 +1,2 @@
+name,verdict,carry_z_cm,lift,reach_s,carry_s,approach_deg,map_rot_deg,map_scale,human_dist_cm,reasons
+take_05_L18_lift0.15,SUCCESS,22.3,0.15,2.46,6.51,-179.69,160.86,0.82,45.29,no problem detected
