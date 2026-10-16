@@ -121,7 +121,9 @@ I measured how much the action label changes from one step to the next:
 
 The noisy labels were 18× jerkier in position and 75× in rotation:
 
-![Action labels: clean episode (top) versus noisy episode (bottom)](assets/action_check.png) I had added a new random push of 30% of full action at every step. The arm trembled in those episodes, and the labels, which correct for the current error, swung with it. 40% of the training data showed shaking as normal behaviour, and the model learned it faithfully.
+![Action labels: clean episode (top) versus noisy episode (bottom)](assets/action_check.png)
+
+I had added a new random push of 30% of full action at every step. The arm trembled in those episodes, and the labels, which correct for the current error, swung with it. 40% of the training data showed shaking as normal behaviour, and the model learned it faithfully.
 
 The DART paper chooses the noise level to match the trained policy's own errors. Mine was far larger, and white rather than smooth.
 
