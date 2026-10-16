@@ -1,0 +1,118 @@
+{
+  "per_task": [
+    {
+      "task_group": "libero_object",
+      "task_id": 9,
+      "metrics": {
+        "sum_rewards": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max_rewards": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "successes": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "video_paths": [
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_0.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_1.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_2.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_3.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_4.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_5.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_6.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_7.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_8.mp4",
+          "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_9.mp4"
+        ],
+        "predicted_video_paths": []
+      },
+      "n_episodes": 10,
+      "n_success": 0,
+      "pc_success": 0.0,
+      "pc_success_ci95": [
+        2.7755575615628914e-15,
+        27.753279986288916
+      ]
+    }
+  ],
+  "per_group": {
+    "libero_object": {
+      "avg_sum_reward": 0.0,
+      "avg_max_reward": 0.0,
+      "pc_success": 0.0,
+      "n_episodes": 10,
+      "n_success": 0,
+      "pc_success_ci95": [
+        2.7755575615628914e-15,
+        27.753279986288916
+      ],
+      "video_paths": [
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_0.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_1.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_2.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_3.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_4.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_5.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_6.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_7.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_8.mp4",
+        "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_9.mp4"
+      ],
+      "predicted_video_paths": []
+    }
+  },
+  "overall": {
+    "avg_sum_reward": 0.0,
+    "avg_max_reward": 0.0,
+    "pc_success": 0.0,
+    "n_episodes": 10,
+    "n_success": 0,
+    "pc_success_ci95": [
+      2.7755575615628914e-15,
+      27.753279986288916
+    ],
+    "eval_s": 66.72109150886536,
+    "eval_ep_s": 6.672109198570252,
+    "video_paths": [
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_0.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_1.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_2.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_3.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_4.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_5.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_6.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_7.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_8.mp4",
+      "outputs/eval/ego_15000_chunk50/videos/libero_object_9/eval_episode_9.mp4"
+    ],
+    "predicted_video_paths": []
+  }
+}

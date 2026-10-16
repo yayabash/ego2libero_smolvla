@@ -9,15 +9,31 @@ I recorded 48 videos of myself picking up a juice carton and putting it in a box
 | Task | LIBERO `libero_object` task 9: *pick up the orange juice and place it in the basket* (Franka Panda) |
 | My data | 48 egocentric takes, 8–13 s each, one camera, no depth |
 | Policy | SmolVLA (450M), fine-tuned from `lerobot/smolvla_base` |
-| Result | **TODO % success** on 50 episodes (reference policy trained on LIBERO's robot data: 92%) |
+| Result | **28% success** (14/50 episodes), smooth motion. Reference policy trained on LIBERO's robot data: 92%. |
 
-![pipeline](assets/pipeline.png) <!-- TODO -->
+| My take (what the phone sees) | Robot replaying it (training data) | Trained policy (v2) |
+|---|---|---|
+| ![](assets/human_take.gif) | ![](assets/robot_replay.gif) | ![](assets/v2_success.gif) |
 
 ---
 
 ## 1. The idea in one paragraph
 
 Human video and robot data differ in three ways. **Actions:** a video has no robot commands. **Body:** a hand is not a two-finger gripper. **Images:** the policy must see a robot arm, not mine. I recover the actions from my hand motion, reduce my hand to "where" and "open or closed", and replay that motion with the simulated robot, recording the simulator's own camera images. Every design choice below answers one of these three gaps.
+
+### What's in this repository
+
+| Path | Contents |
+|---|---|
+| `assets/samples/take_01.mp4`, `take_17.mp4`, `take_33.mp4` | Three of my raw takes, compressed to 640 px. The full 48 (1080p, about 0.7 GB) are not committed because of size. |
+| `data/perception/take_XX_keyposes.jpg` | Every take's first frame with its detected rest, grasp and release points drawn on |
+| `data/perception/take_XX_path.png` | Every take's measured hand path, height and finger opening |
+| `data/perception/*_log.txt` | Per-take detection rates and keypose table |
+| `data/camera_calib.npz` | My phone's calibration (0.5x lens, 1920×1080) |
+| `assets/*.csv`, `assets/build_log*.txt` | Every replay attempt, the lift sweep and the dataset builds |
+| `outputs/eval/*/eval_info.json` | Raw LIBERO evaluation results behind every table below |
+| `outputs/train_log*.txt` | Both training runs, step by step |
+| `patches/binarize_gripper.patch` | The only change made to LeRobot |
 
 ## 2. Pipeline
 
@@ -112,12 +128,47 @@ Rebuilt with 96 clean replays (two layouts per take), checked the labels **befor
 | Policy | Held-out layouts 0–9 | Layouts 10–49 | All |
 |---|---|---|---|
 | Mine, v1 (with noisy data) | 3/10 | 3/40 | 6/50 (12%) |
-| **Mine, v2 (clean only)** | **TODO** | **TODO** | **TODO** |
+| **Mine, v2 (clean only)** | **4/10** | **10/40** | **14/50 (28%)** |
 | Reference (LIBERO robot data) | 9/10 | 37/40 | 46/50 (92%) |
 
-TODO: videos/GIFs of v2 successes and failures, failure description.
+Training v2: 8,000 steps, batch 16, 2 h 1 min, loss 1.60 → 0.09.
+
+**The shaking is gone in every evaluation video.** The remaining failures, from watching the ten held-out episodes:
+
+| Episodes | What happened |
+|---|---|
+| 0, 1, 5, 8 | Success |
+| 2, 3 | Grasped, then moved sideways without lifting, released early or crawled slowly |
+| 4, 7 | Knocked the carton over while approaching |
+| 6 | Carton centred between the fingers, but the gripper never closed fully |
+| 9 | Moved over the carton without grasping |
+
+![](assets/v2_gripper_not_closing.gif)
 
 **Caveat on this comparison:** v2 changes two things at once (no noisy episodes, and more clean ones), so the table alone cannot say which change mattered. The label measurement above is what points at the noise.
+
+### How often to re-plan
+
+The policy predicts 50 actions at a time. I chose beforehand to execute 10 and then re-plan, and tried the alternatives only as extras:
+
+| Actions executed per plan | Held-out success |
+|---|---|
+| 5 (v2) | 1/10 |
+| **10 (v2, main result)** | **4/10** |
+| 50 (v1) | 0/10 |
+
+Ten is the best of the three. Re-planning too rarely lets errors build up; re-planning too often seems to make the policy switch between plans.
+
+### Snapping the gripper command (inference only, decided after seeing the failures)
+
+In several failures the gripper hovered half-closed around a centred carton. The policy's gripper output sits between "open" (−1) and "closed" (+1), and the simulator treats it as partly closed. Snapping it to the nearer of the two is common in LIBERO evaluations. It needs no retraining: a four-line change in LeRobot's environment wrapper ([`patches/binarize_gripper.patch`](patches/binarize_gripper.patch)), switched on with `BINARIZE_GRIPPER=1`.
+
+| Policy | Held-out 0–9 | Layouts 10–49 | All |
+|---|---|---|---|
+| v2 | 4/10 | 10/40 | 14/50 (28%) |
+| v2 + snapped gripper | 4/10 | 10/40 | 14/50 (28%) |
+
+**No change at all.** So in the failing episodes the gripper command was already on the "open" side, and snapping kept it open. The policy is not hovering half-closed; it is *deciding* not to close. That is a problem of learning when to grasp, which no change at evaluation time can fix. I keep the patch in the repository because it rules this explanation out.
 
 ## 6. Honest limitations
 
@@ -136,6 +187,7 @@ TODO: videos/GIFs of v2 successes and failures, failure description.
 5. **More tasks** with objects I already have: ranch bottle → LIBERO "salad dressing", bowl and plate → "put the bowl on the plate".
 6. **Faster inference:** fewer flow-matching steps (10 → 5), measured as success versus time.
 7. **Check data before every training run.** The jerk check took two minutes and would have saved a 3.7-hour run.
+8. **More grasp-moment data.** The main remaining failure is the policy not deciding to close. Replays that start right next to the carton, from slightly different positions, would put more weight on that moment.
 
 ## 8. Reproduce
 
@@ -164,7 +216,32 @@ python build_dataset.py --noise 0 --lift_min 0.16 --lift_max 0.19 \
   --root data/lerobot_dataset_clean --repo_id local/hmnd_ego_oj_clean
 ```
 
-Training and evaluation commands: TODO (copy the exact ones used).
+```bash
+# training (.venv), about 2 h on an RTX 4060 laptop
+lerobot-train \
+  --policy.path=lerobot/smolvla_base \
+  --policy.empty_cameras=1 \
+  --rename_map='{"observation.images.image": "observation.images.camera1", "observation.images.image2": "observation.images.camera2"}' \
+  --dataset.repo_id=local/hmnd_ego_oj_clean --dataset.root=data/lerobot_dataset_clean \
+  --batch_size=16 --steps=8000 --save_freq=2000 --num_workers=4 \
+  --policy.device=cuda --policy.push_to_hub=false --wandb.enable=false \
+  --output_dir=outputs/train/smolvla_ego_oj_clean
+
+# evaluation: 50 episodes; episode i uses LIBERO start layout i (0-9 never used in training)
+MUJOCO_GL=egl lerobot-eval \
+  --policy.path=outputs/train/smolvla_ego_oj_clean/checkpoints/008000/pretrained_model \
+  --policy.n_action_steps=10 --policy.device=cuda \
+  --rename_map='{"observation.images.image": "observation.images.camera1", "observation.images.image2": "observation.images.camera2"}' \
+  --env.type=libero --env.task=libero_object --env.task_ids="[9]" \
+  --env.observation_height=256 --env.observation_width=256 \
+  --eval.batch_size=1 --eval.n_episodes=50 --seed=1000 \
+  --output_dir=outputs/eval/ego_clean_8000
+python score.py ego_clean_8000      # splits held-out and training layouts
+
+# reference: same command with --policy.path=HuggingFaceVLA/smolvla_libero and no --rename_map
+```
+
+The camera rename and the empty third camera slot are needed because `lerobot/smolvla_base` was pretrained with three cameras named `camera1` to `camera3`.
 
 ## Acknowledgements
 
